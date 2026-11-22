@@ -1,0 +1,77 @@
+{
+  "name": "timon-plugin-chess-insight",
+  "version": "1.0.0",
+  "description": "Chess Insight: download your public chess.com games, analyse them locally with Stockfish, review them move by move and get written coaching from a Timon agent.",
+  "license": "GPL-3.0-or-later",
+  "author": "Chess Insight contributors",
+  "private": true,
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js"
+  },
+  "scripts": {
+    "build": "node scripts/build-client.mjs",
+    "build:eco": "node scripts/build-eco.mjs",
+    "test": "node --test \"tests/**/*.test.js\""
+  },
+  "files": [
+    "lib",
+    "migrations",
+    "data",
+    "assets",
+    "vendor",
+    "README.md",
+    "LICENSE",
+    "SIGNATURE"
+  ],
+  "engines": {
+    "node": ">=22.5"
+  },
+  "devDependencies": {},
+  "timon": {
+    "id": "chess-coach",
+    "apiVersion": 15,
+    "kind": "page",
+    "label": "Chess Insight",
+    "description": "Review your public chess.com games with a local Stockfish engine (chess.com-style game review, accuracy, classified moves) and get written coaching from a Timon agent.",
+    "route": "/chess",
+    "icon": "assets/icon.svg",
+    "permissions": [
+      "storage:sql",
+      "settings",
+      "http:outbound",
+      "agents:read",
+      "agents:manage",
+      "messages:send",
+      "messages:read",
+      "backends:read",
+      "realtime:publish",
+      "notify"
+    ],
+    "migrations": "migrations",
+    "client": {
+      "slots": ["page", "nav.item"],
+      "external": ["react", "@timon/ui"],
+      "mode": "esm"
+    },
+    "http": {
+      "hosts": [
+        { "host": "api.chess.com", "why": "Public player archives (read-only)." }
+      ]
+    },
+    "settings": [
+      { "key": "username", "type": "string", "label": "chess.com username (public profile)", "default": "" },
+      { "key": "depthFast", "type": "number", "label": "Engine depth, first pass (10-20)", "default": 14 },
+      { "key": "depthDeep", "type": "number", "label": "Engine depth, critical positions (16-28)", "default": 20 },
+      { "key": "threads", "type": "number", "label": "Engine threads (0 = automatic, 1-16)", "default": 0 },
+      { "key": "hashMb", "type": "number", "label": "Engine hash in MB (16-2048)", "default": 64 },
+      { "key": "contact", "type": "string", "label": "Optional contact added to the User-Agent sent to chess.com (opt-in)", "default": "" },
+      { "key": "autoAnalyse", "type": "boolean", "label": "Analyse the downloaded games automatically after a sync (runs once, no timer)", "default": true },
+      { "key": "language", "type": "string", "label": "Coach language: auto, en or fr", "default": "auto" },
+      { "key": "showBestArrow", "type": "boolean", "label": "Show the engine's best-move arrow", "default": true }
+    ],
+    "license": { "required": false }
+  }
+}
